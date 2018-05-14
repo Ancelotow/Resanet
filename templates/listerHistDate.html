@@ -1,0 +1,54 @@
+{% include "vueEntete.html" %}
+{% include "vueEnteteGestionnaire.html" %}
+
+{% if afficher == false %}
+	
+	<form action="/gestionnaire/listHistDate/afficher" method="POST" >
+		<center><label>Sélectionner une date jj/mm/aaaa</label><br>
+		<input type="date" name="date" required >
+		<button type="submit" class="btn btn-success">Valider</button></center>
+	</form>
+	
+{% else %}
+	
+	<h3>Historiques des réservations pour le {{ date }} :</h3><br>
+	
+	{% if rien == False %}	
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Numéro de Carte</th>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Service</th>			
+				</tr>
+			</thead>
+			
+			<tbody>
+		{% for unPersonnel in personnels %}
+			<tr>
+				<td>{{ unPersonnel['numeroCarte'] }}</td>
+				<td>{{ unPersonnel['nom'] }}</td>
+				<td>{{ unPersonnel['prenom'] }}</td>
+				<td>{{ unPersonnel['nomService'] }}</td>
+			</tr>
+		{% endfor %}
+			</tbody>
+		</table>
+	
+	{% else %}
+		<p>Aucune réservation pour cette date.</p>
+		
+	{% endif %}
+	
+	<br/><br/>
+	<form action="/gestionnaire/listHistDate/afficher" method="POST" >
+		<center><label>Sélectionner une autre date jj/mm/aaaa</label><br>
+		<input type="date" name="date" required >
+		<button type="submit" class="btn btn-success">Valider</button></center>
+	</form>
+	
+{% endif %}
+
+
+{% include "vuePied.html" %}

@@ -1,0 +1,66 @@
+{% include "vueEntete.html" %}
+{% include "vueEnteteGestionnaire.html" %}
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>Numéro de Carte</th>
+			<th>Nom</th>
+			<th>Prénom</th>
+			<th>Service</th>			
+		</tr>
+	</thead>
+	
+	<tbody>
+		{% for unPersonnel in personnels %}
+			<tr>
+				<td>{{ unPersonnel['numeroCarte'] }}</td>
+				<td>{{ unPersonnel['nom'] }}</td>
+				<td>{{ unPersonnel['prenom'] }}</td>
+				<td>{{ unPersonnel['nomService'] }}</td>					
+				<td><form action="/gestionnaire/listHistCarte/history" method="POST">
+					<input type="hidden" name="numeroCarte" value={{ unPersonnel['numeroCarte'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >
+					<input type="hidden" name="service" value={{ unPersonnel['nomService'] }} >																		
+					<button type="submit" class="btn btn-primary btn-xs" >Consulter</button>
+					</form></td>					
+			</tr>
+		{% endfor %}
+		
+		
+		{% if cardH == True %}
+			
+				
+			 
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h3 class="modal-title"><strong>Historique</strong></h3>
+						
+					  </div>
+					  <div class="modal-body">
+						<h4><strong>Informations</strong></h4>
+						<p>Nom : {{ lePersonnel[1] }}</p><p> Prénom : {{ lePersonnel[2] }}</p><p> Numéro de carte : {{ lePersonnel[0] }}</p><p>Service : {{ lePersonnel[3] }}</p>
+						<hr>
+						<h4><strong>Dates de Réservation</strong></h4>
+						{% if rien == True %}
+							<p>Aucune réservations pour {{ lePersonnel[1] }} {{ lePersonnel[2] }}</p>
+						{% elif rien == False %}
+							<ul class="list-group">
+								{% for uneDate in dates %}
+									<li class="list-group-item">{{ uneDate }}</li>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					  </div>
+					  <div class="modal-footer">						
+						<a href="/gestionnaire/listHistCarte" ><button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button></a>
+					  </div>
+					</div>
+				 
+			 </div>
+	
+		{% endif %}
+
+{% include "vuePied.html" %}

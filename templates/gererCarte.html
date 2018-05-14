@@ -1,0 +1,213 @@
+{% include "vueEntete.html" %}
+{% include "vueEnteteGestionnaire.html" %}
+
+{% if changer == True %}
+		<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été rétinialisé avec succès !
+		</div>
+{% elif changer == False %}
+		<div class="alert alert-warning" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a déja été rétinialisé.
+		</div>
+{% endif %}
+
+
+{% if credit == True %}
+		<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été crédité avec succès !
+		</div>
+{% endif %}
+
+{% if debit == True %}
+		<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été débité avec succès !
+		</div>
+{% endif %}
+
+{% if supp == True %}
+		<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été supprimé avec succès !
+		</div>
+{% endif %}
+
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>Numéro de Carte</th>
+			<th>Solde</th>
+			<th>Matricule</th>
+			<th>Nom</th>
+			<th>Prénom</th>
+			<th>Service</th>			
+		</tr>
+	</thead>
+	
+	<tbody>
+		{% for unPersonnel in personnels %}
+			<tr>
+				<td>{{ unPersonnel['numeroCarte'] }}</td>
+				<td>{{ unPersonnel['solde'] }} €</td>
+				<td>{{ unPersonnel['matricule'] }}</td>
+				<td>{{ unPersonnel['nom'] }}</td>
+				<td>{{ unPersonnel['prenom'] }}</td>
+				<td>{{ unPersonnel['nomService'] }}</td>
+				{% if unPersonnel['activee'] == 1 %}
+					<td><form action="/gestionnaire/gererCarte/crediter" method="POST">
+					<input type="hidden" name="numeroCarte" value={{ unPersonnel['numeroCarte'] }} >
+					<input type="hidden" name="solde" value={{ unPersonnel['solde'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >
+					<input type="hidden" name="service" value={{ unPersonnel['nomService'] }} >																		
+					<button type="submit" class="btn btn-primary btn-xs" >Créditer</button>
+					</form></td>	
+					<td><form action="/gestionnaire/gererCarte/debiter" method="POST">
+					<input type="hidden" name="numeroCarte" value={{ unPersonnel['numeroCarte'] }} >
+					<input type="hidden" name="solde" value={{ unPersonnel['solde'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >
+					<input type="hidden" name="service" value={{ unPersonnel['nomService'] }} >																		
+					<button type="submit" class="btn btn-primary btn-xs" >Débiter</button>
+					</form></td>	
+					<td><form role="form" action="/gestionnaire/gererCarte/bloquer" method="POST">
+						<input type="hidden" name="matricule" value={{ unPersonnel['numeroCarte'] }} />
+						<button type="submit" class="btn btn-primary btn-xs">Bloquer</button>
+					</form></td>								
+					<td><form role="form" action="/gestionnaire/gererCarte/initMdp" method="POST">
+						<input type="hidden" name="matricule" value={{ unPersonnel['numeroCarte'] }} />
+						<button type="submit" class="btn btn-primary btn-xs">Init. MDP</button>
+					</form></td>
+				{% else %}
+					<td></td>	
+					<td></td>				
+					<td><form role="form" action="/gestionnaire/gererCarte/activer" method="POST">
+						<input type="hidden" name="matricule" value={{ unPersonnel['numeroCarte'] }} />
+						<button type="submit" class="btn btn-primary btn-xs">Activer</button>
+					</form></td>				
+					
+					<td></td>
+				{% endif %}						
+				<td><form action="/gestionnaire/gererCarte/history" method="POST">
+					<input type="hidden" name="numeroCarte" value={{ unPersonnel['numeroCarte'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >
+					<input type="hidden" name="service" value={{ unPersonnel['nomService'] }} >																		
+					<button type="submit" class="btn btn-primary btn-xs" >Historique</button>
+					</form></td>
+				<td><form action="/gestionnaire/gererCarte/supprimer" method="POST">
+					<input type="hidden" name="numCarte" value={{ unPersonnel['numeroCarte'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >																	
+					<button type="submit" class="btn btn-danger btn-xs" >Suppimer</button>
+					</form></td>					
+			</tr>
+		{% endfor %}
+		
+		{% if cardC == True %}
+			<form action="/gestionnaire/gererCarte/crediter/credit" method="POST" >
+				
+			 
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h3 class="modal-title"><strong>Créditer une carte</strong></h3>
+						
+					  </div>
+					  <div class="modal-body">
+						<h4><strong>Informations</strong></h4>
+						<p>Nom : {{ lePersonnel[1] }}</p><p> Prénom : {{ lePersonnel[2] }}</p><p> Numéro de carte : {{ lePersonnel[0] }}</p><p>Service : {{ lePersonnel[3] }}</p>
+						<hr>
+						<h4><strong>Créditer le compte ?</strong></h4>
+						<p>Solde : {{ lePersonnel[4] }} €</p>
+						<p>Montant du crédit <input type="number" step="0.01" name="credit" ></p>
+						<input type="hidden" name="nom" value={{ lePersonnel[1] }} >
+						<input type="hidden" name="prenom" value={{ lePersonnel[2] }} >
+					  </div>
+					  <div class="modal-footer">
+						
+						<button type="submit" class="btn btn-primary">Créditer</button>
+						<input type="hidden" name="matricule" value={{ lePersonnel[0] }} >
+						<input type="hidden" name="nom" value={{ lePersonnel[1] }} >
+						<input type="hidden" name="prenom" value={{ lePersonnel[2] }} >
+						<input type="hidden" name="numCarte" value={{ lePersonnel[0] }} >
+						<a href="/gestionnaire/gererCarte" ><button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button></a>
+					  </div>
+					</div>
+				 
+			 </div></form>
+	
+		{% endif %}
+		
+		{% if cardH == True %}
+			
+				
+			 
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h3 class="modal-title"><strong>Historique</strong></h3>
+						
+					  </div>
+					  <div class="modal-body">
+						<h4><strong>Informations</strong></h4>
+						<p>Nom : {{ lePersonnel[1] }}</p><p> Prénom : {{ lePersonnel[2] }}</p><p> Numéro de carte : {{ lePersonnel[0] }}</p><p>Service : {{ lePersonnel[3] }}</p>
+						<hr>
+						<h4><strong>Dates de Réservation</strong></h4>
+						{% if rien == True %}
+							<p>Aucune réservations pour {{ lePersonnel[1] }} {{ lePersonnel[2] }}</p>
+						{% elif rien == False %}
+							<ul class="list-group">
+								{% for uneDate in dates %}
+									<li class="list-group-item">{{ uneDate }}</li>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					  </div>
+					  <div class="modal-footer">						
+						<a href="/gestionnaire/gererCarte" ><button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button></a>
+					  </div>
+					</div>
+				 
+			 </div>
+	
+		{% endif %}
+		
+		{% if cardD == True %}
+			<form action="/gestionnaire/gererCarte/debiter/debit" method="POST" >
+				
+			 
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h3 class="modal-title"><strong>Débiter une carte</strong></h3>
+						
+					  </div>
+					  <div class="modal-body">
+						<h4><strong>Informations</strong></h4>
+						<p>Nom : {{ lePersonnel[1] }}</p><p> Prénom : {{ lePersonnel[2] }}</p><p> Numéro de carte : {{ lePersonnel[0] }}</p><p>Service : {{ lePersonnel[3] }}</p>
+						<hr>
+						<h4><strong>Créditer le compte ?</strong></h4>
+						<p>Solde : {{ lePersonnel[4] }} €</p>
+						<p>Montant du débit <input type="number" step="0.01" name="credit" ></p>
+						<input type="hidden" name="nom" value={{ lePersonnel[1] }} >
+						<input type="hidden" name="prenom" value={{ lePersonnel[2] }} >
+					  </div>
+					  <div class="modal-footer">
+						
+						<button type="submit" class="btn btn-primary">Débiter</button>
+						<input type="hidden" name="matricule" value={{ lePersonnel[0] }} >
+						<input type="hidden" name="nom" value={{ lePersonnel[1] }} >
+						<input type="hidden" name="prenom" value={{ lePersonnel[2] }} >
+						<input type="hidden" name="numCarte" value={{ lePersonnel[0] }} >
+						<a href="/gestionnaire/gererCarte" ><button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button></a>
+					  </div>
+					</div>
+				 
+			 </div></form>
+	
+		{% endif %}
+		
+	</tbody>
+</table>
+
+{% include "vuePied.html" %}

@@ -1,0 +1,56 @@
+{% include "vueEntete.html" %}
+{% include "vueEnteteGestionnaire.html" %}
+
+{% if pb == False %}
+	<div class="alert alert-danger" role="alert">
+	{{ danger }}
+	</div>
+{% endif %}
+{% if reu == True %}
+	<div class="alert alert-success" role="alert">
+	{{ danger }}
+	</div>
+{% endif %}
+
+
+<h3>Ajouter un nouveau personnel</h3><br/>
+
+ <form action='/gestionnaire/ajoutPersonnel/ajouter' method="POST" >
+   <div class="input-group">
+    <span class="input-group-addon">Matricule</span>
+    <input id="matricule" type="number" min="0" class="form-control" name="matricule" placeholder="Matricule du nouveau personnel" required >
+  </div><br/>
+   <div class="input-group">
+    <span class="input-group-addon">Nom </span>
+    <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom de famille du nouveau personnel" required >
+  </div><br/>
+  <div class="input-group">
+    <span class="input-group-addon">Prénom</span>
+    <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom du nouveau personnel" required >
+  </div><br/>
+  <div class="input-group">
+    <span class="input-group-addon">Date de naissance</span>
+    <input id="naissance" type="date" class="form-control" name="naissance" placeholder="AAAA-MM-JJ" required >
+  </div><br/>
+    <div class="input-group">
+    <span class="input-group-addon">Fonction</span>
+    <select  id="inputState" class="form-control" name="fonction">
+		<option value="0"  >Selectionner sa fonction</option>
+		{% for uneFonction in fonction %}
+        <option value={{ uneFonction['idFonction'] }}>{{ uneFonction['nomFonction'] }}</option>
+        {% endfor %}
+    </select>
+  </div><br/>
+  <div class="input-group">
+    <span class="input-group-addon">Service&emsp;</span>
+    <select  id="inputState" class="form-control" name="service">
+		<option value="0" >Selectionner son service</option>
+		{% for unService in service %}
+        <option value={{ unService['idService'] }}>{{ unService['nomService'] }}</option>
+        {% endfor %}
+    </select>
+  </div><br/>
+   <center><button type="submit" class="btn btn-success">Créer</button></center>
+</form> 
+
+{% include "vuePied.html" %}

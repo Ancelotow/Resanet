@@ -1,0 +1,91 @@
+{% include "vueEntete.html" %}
+{% include "vueEnteteGestionnaire.html" %}	
+
+{% if cree == True %}
+	<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été crée et {{ activation }} avec succès !
+	</div>
+{% endif %}
+
+{% if supp == True %}
+	<div class="alert alert-success" role="alert">
+		  Le compte de {{ nom }} {{ prenom }} a été supprimé avec succès !
+	</div>
+{% endif %}
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>Matricule</th>
+			<th>Nom</th>
+			<th>Prénom</th>
+			<th>Service</th>			
+		</tr>
+	</thead>
+	
+	<tbody>
+		{% for unPersonnel in personnels %}
+			<tr>
+				<td>{{ unPersonnel['matricule'] }}</td>
+				<td>{{ unPersonnel['nom'] }}</td>
+				<td>{{ unPersonnel['prenom'] }}</td>
+				<td>{{ unPersonnel['nomService'] }}</td>				
+				<td><form action="/gestionnaire/listerPersonnelSansCarte/creeCompte" method="POST" >
+					<input type="hidden" name="matricule" value={{ unPersonnel['matricule'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >
+					<input type="hidden" name="service" value={{ unPersonnel['nomService'] }} >												
+					<button type="submit" class="btn btn-primary btn-xs" >Créer compte</button>
+					</form>				  
+				</td>
+				<td><form action="/gestionnaire/listerPersonnelSansCarte/suppPersonnel" method="POST" >
+					<input type="hidden" name="matricule" value={{ unPersonnel['matricule'] }} >
+					<input type="hidden" name="nom" value={{ unPersonnel['nom'] }} >
+					<input type="hidden" name="prenom" value={{ unPersonnel['prenom'] }} >											
+					<button type="submit" class="btn btn-danger btn-xs" >Supprimer</button>
+					</form>				  
+				</td>						
+			</tr>
+			
+		{% endfor %}
+		
+		{% if card == True %}
+			<form action="/gestionnaire/listerPersonnelSansCarte/creeCompte/creation" method="POST" >
+				
+			 
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h3 class="modal-title"><strong>Création d'une carte</strong></h3>
+						
+					  </div>
+					  <div class="modal-body">
+						<h4><strong>Informations</strong></h4>
+						<p>Nom : {{ lePersonnel[1] }}</p><p> Prénom : {{ lePersonnel[2] }}</p><p> Matricule : {{ lePersonnel[0] }}</p><p>Service : {{ lePersonnel[3] }}</p>
+						<hr>
+						<h4><strong>Activer le compte ?</strong></h4>
+						<p><input type="radio"  name="activ" value="True">Activer</p><p><input type="radio"  name="activ" value="False" checked >Bloquer</p>
+					  </div>
+					  <div class="modal-footer">
+						
+						<button type="submit" class="btn btn-primary">Créer</button>
+						<input type="hidden" name="matricule" value={{ lePersonnel[0] }} >
+						<input type="hidden" name="nom" value={{ lePersonnel[1] }} >
+						<input type="hidden" name="prenom" value={{ lePersonnel[2] }} >
+						<a href="/gestionnaire/listerPersonnelSansCarte" ><button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button></a>
+					  </div>
+					</div>
+				 
+			 </div></form>
+	
+		{% endif %}
+		
+		
+   
+	</tbody>
+</table>
+
+
+
+
+{% include "vuePied.html" %}
